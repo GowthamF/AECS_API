@@ -1,6 +1,16 @@
-﻿namespace Delivery_API.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Delivery_API.Models
 {
-    public class DatabaseContext
+    public class DatabaseContext : DbContext
     {
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+
+
+        public DbSet<Delivery> Deliveries
+        {
+            get; set;
+        }
+
     }
 }
