@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Delivery_API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,19 +11,32 @@ namespace Delivery_API.Controllers
     public class DeliveryController : ControllerBase
     {
 
+        private readonly DatabaseContext _databaseContext;
 
-
-
-        [HttpGet("{id}")]
-        public string Get(int id)
+        public DeliveryController(DatabaseContext databaseContext)
         {
-            return "value";
+            _databaseContext = databaseContext;
         }
 
-        // POST api/<DeliveryController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+
+
+        [HttpGet("GetDelivery/{id}")]
+        public async Task<IActionResult> GetDelivery(int id)
         {
+            var delivery = await _databaseContext.Deliveries.Where(x=> x.Id == id).FirstOrDefaultAsync();
+
+            return Ok(delivery);
+        }
+
+
+        [HttpPost("CancelDelivery")]
+        public async Task<IActionResult> CancelDelivery([FromBody] Delivery delivery)
+        {
+            await _databaseContext.Deliveries.AddAsync(delivery);
+
+            await _databaseContext.SaveChangesAsync();
+
+            return Ok(delivery);
         }
     }
 }
